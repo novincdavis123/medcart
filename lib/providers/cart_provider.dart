@@ -46,23 +46,34 @@ class CartNotifier extends Notifier<CartState> {
   /// Persistence
   /// --------------------
   Future<void> _loadCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartData = prefs.getString('cart');
-    final coupon = prefs.getString('coupon');
+  final prefs = await SharedPreferences.getInstance();
+  final cartData = prefs.getString('cart');
+  final coupon = prefs.getString('coupon');
 
-    if (cartData != null) {
-      state = state.copyWith(
-        items: Map<int, int>.from(jsonDecode(cartData)),
-        coupon: (coupon == null || coupon.isEmpty) ? null : coupon,
-      );
-    }
-  }
+  if (cartData != null) {
+    final decoded = Map<String, dynamic>.from(jsonDecode(cartData));
 
-  Future<void> _saveCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('cart', jsonEncode(state.items));
-    await prefs.setString('coupon', state.coupon ?? '');
+    state = state.copyWith(
+      items: decoded.map(
+        (key, value) => MapEntry(int.parse(key), value as int),
+      ),
+      coupon: (coupon == null || coupon.isEmpty) ? null : coupon,
+    );
   }
+}
+
+
+Future<void> _saveCart() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final cartMap = state.items.map(
+    (key, value) => MapEntry(key.toString(), value),
+  );
+
+  await prefs.setString('cart', jsonEncode(cartMap));
+  await prefs.setString('coupon', state.coupon ?? '');
+}
+
 
   /// --------------------
   /// Cart Actions
