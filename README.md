@@ -4,7 +4,7 @@
 A Flutter-based shopping cart app designed for a medical product store.
 This app demonstrates state management, persistence, and business logic while keeping a clean, maintainable structure.
 
-Features
+## Features
 
 1. Product Listing
 
@@ -52,7 +52,7 @@ Features
   
   » Placeholder images for products
 
-Tech Stack
+## Tech Stack
 
   • Flutter 3+
 
@@ -61,7 +61,7 @@ Tech Stack
   • SharedPreferences (local persistence)
 
 Material Design (UI)
-Design Decisions
+## Design Decisions
 ✅ Scope Control
 
 No login/registration: Not requested, avoids scope creep
@@ -88,7 +88,7 @@ Focus on readability and usability
 
 Avoided unnecessary complexity that could distract from evaluation
 
-How to Run
+## How to Run
 
 1. Clone the repo
 
@@ -110,7 +110,7 @@ Possible Extensions (Future Enhancements)
 
   » Image caching / better product images
 
-✅ Final Verdict (Important)
+✅## Final Verdict (Important)
 
 ✔ This README is professional
 ✔ Easy for interviewers to scan
