@@ -11,13 +11,17 @@ class MedicineModel {
     required this.image,
   });
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'price': price, 'image': image};
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'price': price,
+    'image': image,
+  };
 
   factory MedicineModel.fromJson(Map<String, dynamic> json) => MedicineModel(
-        id: json['id'],
-        name: json['name'],
-        price: json['price'],
-        image: json['image'],
-      );
+    id: json['id'],
+    name: json['name'],
+    price: json['price'],
+    image: json['image'],
+  );
 }

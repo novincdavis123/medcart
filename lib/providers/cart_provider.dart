@@ -9,10 +9,7 @@ class CartState {
   final Map<int, int> items;
   final String? coupon;
 
-  const CartState({
-    required this.items,
-    this.coupon,
-  });
+  const CartState({required this.items, this.coupon});
 
   CartState copyWith({
     Map<int, int>? items,
@@ -29,8 +26,9 @@ class CartState {
 /// --------------------
 /// Provider
 /// --------------------
-final cartProvider =
-    NotifierProvider<CartNotifier, CartState>(CartNotifier.new);
+final cartProvider = NotifierProvider<CartNotifier, CartState>(
+  CartNotifier.new,
+);
 
 /// --------------------
 /// Notifier
@@ -46,34 +44,32 @@ class CartNotifier extends Notifier<CartState> {
   /// Persistence
   /// --------------------
   Future<void> _loadCart() async {
-  final prefs = await SharedPreferences.getInstance();
-  final cartData = prefs.getString('cart');
-  final coupon = prefs.getString('coupon');
+    final prefs = await SharedPreferences.getInstance();
+    final cartData = prefs.getString('cart');
+    final coupon = prefs.getString('coupon');
 
-  if (cartData != null) {
-    final decoded = Map<String, dynamic>.from(jsonDecode(cartData));
+    if (cartData != null) {
+      final decoded = Map<String, dynamic>.from(jsonDecode(cartData));
 
-    state = state.copyWith(
-      items: decoded.map(
-        (key, value) => MapEntry(int.parse(key), value as int),
-      ),
-      coupon: (coupon == null || coupon.isEmpty) ? null : coupon,
-    );
+      state = state.copyWith(
+        items: decoded.map(
+          (key, value) => MapEntry(int.parse(key), value as int),
+        ),
+        coupon: (coupon == null || coupon.isEmpty) ? null : coupon,
+      );
+    }
   }
-}
 
+  Future<void> _saveCart() async {
+    final prefs = await SharedPreferences.getInstance();
 
-Future<void> _saveCart() async {
-  final prefs = await SharedPreferences.getInstance();
+    final cartMap = state.items.map(
+      (key, value) => MapEntry(key.toString(), value),
+    );
 
-  final cartMap = state.items.map(
-    (key, value) => MapEntry(key.toString(), value),
-  );
-
-  await prefs.setString('cart', jsonEncode(cartMap));
-  await prefs.setString('coupon', state.coupon ?? '');
-}
-
+    await prefs.setString('cart', jsonEncode(cartMap));
+    await prefs.setString('coupon', state.coupon ?? '');
+  }
 
   /// --------------------
   /// Cart Actions
@@ -103,8 +99,8 @@ Future<void> _saveCart() async {
   /// --------------------
   /// Coupons
   /// --------------------
-  void applyCoupon(String code, double subtotal) {
-    if (state.coupon != null) return;
+  bool applyCoupon(String code, double subtotal) {
+    if (state.coupon != null) return false; // already applied
 
     final c = code.toUpperCase();
 
@@ -115,7 +111,10 @@ Future<void> _saveCart() async {
     if (isValid) {
       state = state.copyWith(coupon: c);
       _saveCart();
+      return true;
     }
+
+    return false;
   }
 
   void removeCoupon() {
